@@ -747,10 +747,12 @@ typedef int ssize_t;
 
     #define INT8_MIN                    SCHAR_MIN
 
-    #if ( defined( _MSC_VER ) )
 
 // C99 stdint.h not supported in VC++/VS.NET yet.
-
+#if _MSC_VER >= 1900
+#include <stdint.h>
+#endif
+#if _MSC_VER < 1900
 typedef INT8 int8_t;
 typedef UINT8 uint8_t;
 typedef INT16 int16_t;
@@ -765,6 +767,7 @@ typedef long long int64_t;
 typedef unsigned long long uint64_t;
     #endif
 
+#if _MSC_VER < 1900
 typedef int8_t int_least8_t;
 typedef int16_t int_least16_t;
 typedef int32_t int_least32_t;
@@ -784,7 +787,7 @@ typedef uint8_t uint_fast8_t;
 typedef uint16_t uint_fast16_t;
 typedef uint32_t uint_fast32_t;
 typedef uint64_t uint_fast64_t;
-
+#endif
     #if ( !defined( _MSC_VER ) || TARGET_OS_WINDOWS_CE )
 typedef long int intptr_t;
 typedef unsigned long int uintptr_t;

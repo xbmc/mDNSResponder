@@ -8,9 +8,9 @@
     <true/>
     <key>com.apple.private.network.socket-delegate</key>
     <true/>
-    <key>com.apple.networkd.cellular_blocked.notify</key>
-    <true/>
     <key>com.apple.private.SCNetworkConnection-proxy-user</key>
+    <true/>
+    <key>com.apple.mDNSResponder_Helper</key>
     <true/>
     <key>com.apple.private.network.reserved-port</key>
     <true/>
@@ -18,15 +18,29 @@
     <true/>
     <key>com.apple.private.snhelper</key>
     <true/>
-    <key>com.apple.telephony.cupolicy-monitor-access</key>
-    <true/>
     <key>com.apple.private.necp.match</key>
+    <true/>
+    <key>com.apple.private.necp.policies</key>
     <true/>
     <key>com.apple.security.network.server</key>
     <true/>
     <key>com.apple.security.network.client</key>
     <true/>
     <key>com.apple.private.network.awdl.restricted</key>
+    <true/>
+    <key>com.apple.BTServer.allowRestrictedServices</key>
+    <true/>
+    <key>com.apple.BTServer.appleMfgDataAdvertising</key>
+    <true/>
+    <key>com.apple.BTServer.appleMfgDataScanner</key>
+    <true/>
+    <key>com.apple.developer.networking.networkextension</key>
+    <array>
+      <string>app-proxy-provider-system</string>
+    </array>
+    <key>com.apple.private.neagent</key>
+    <true/>
+    <key>com.apple.private.nehelper.privileged</key>
     <true/>
 </dict>
 </plist>

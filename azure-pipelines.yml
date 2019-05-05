@@ -1,0 +1,74 @@
+jobs:
+- job: Build
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      x64 Debug:
+        CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
+        BUILD_CONFIGURATION: "Debug"
+        ARCH: x64
+      x64 Release:
+        CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
+        BUILD_CONFIGURATION: "Release"
+        ARCH: x64
+      Win32 Debug:
+        CMAKE_GENERATOR: "Visual Studio 15 2017"
+        BUILD_CONFIGURATION: "Debug"
+        ARCH: Win32
+      Win32 Release:
+        CMAKE_GENERATOR: "Visual Studio 15 2017"
+        BUILD_CONFIGURATION: "Release"
+        ARCH: Win32
+  steps:
+  - task: CMake@1
+    inputs:
+      cmakeArgs: -G "$(CMAKE_GENERATOR)" ..
+  - task: VSBuild@1
+    inputs:
+      solution: build\dnssd.sln
+      configuration: $(BUILD_CONFIGURATION)
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: build\$(BUILD_CONFIGURATION)
+      includeRootFolder: false
+      archiveFile: $(Build.ArtifactStagingDirectory)\$(ARCH)_$(BUILD_CONFIGURATION).zip
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)\$(ARCH)_$(BUILD_CONFIGURATION).zip
+      artifactName: $(ARCH) $(BUILD_CONFIGURATION)  
+- job: Deploy
+  dependsOn: Build
+  pool:
+    vmImage: 'ubuntu-16.04'
+  steps:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      downloadType: specific
+# Mostly taken from ove-install
+# https://github.com/ove/ove-install/blob/df9c1a4ae60798baae55e8e749556a3ae9a7d369/azure-pipelines.yml#L95
+  - task: GitHubRelease@0
+    displayName: 'Create GitHub Draft Release'
+    inputs:
+      gitHubConnection: mDNSResponderDeploy
+      tagSource: manual
+      tag: 'untagged-$(Build.SourceVersion)$(Build.BuildNumber)'
+      title: '$(Build.BuildId)-$(Build.SourceBranchName)'
+      releaseNotesSource: input
+      releaseNotes: 'Based on commit: $(Build.SourceVersion)'
+      assets: '$(System.ArtifactsDirectory)/**/*.zip'
+      isDraft: true
+      addChangeLog: false
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')))
+  - task: GithubRelease@0
+    displayName: 'Create GitHub Release'
+    inputs:
+      gitHubConnection: mDNSResponderDeploy
+      action: 'edit'
+      tagSource: manual
+      tag: '$(Build.SourceBranchName)'
+      assets: '$(System.ArtifactsDirectory)/**/*.zip'
+      assetUploadMode: replace
+      isDraft: false
+      addChangeLog: false
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))

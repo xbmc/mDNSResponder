@@ -1,3 +1,11 @@
+trigger:
+  tags:
+    include:
+    - '*'
+  branches:
+    include:
+    - '*'
+
 jobs:
 - job: Build
   pool:
@@ -36,7 +44,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: $(Build.ArtifactStagingDirectory)\$(ARCH)_$(BUILD_CONFIGURATION).zip
-      artifactName: $(ARCH) $(BUILD_CONFIGURATION)  
+      artifactName: $(ARCH) $(BUILD_CONFIGURATION)
 - job: Deploy
   dependsOn: Build
   pool:

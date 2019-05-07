@@ -38,12 +38,22 @@ jobs:
       configuration: $(BUILD_CONFIGURATION)
   - task: CopyFiles@2
     inputs:
+      sourceFolder: build\$(BUILD_CONFIGURATION)
+      contents: '*.lib'
+      targetFolder: build\$(BUILD_CONFIGURATION)\BonjourSDKLike\Lib\$(ARCH)
+  - task: CopyFiles@2
+    inputs:
       sourceFolder: build\dnssd.dir\$(BUILD_CONFIGURATION)
       contents: '*.pdb'
-      targetFolder: build\$(BUILD_CONFIGURATION)
+      targetFolder: build\$(BUILD_CONFIGURATION)\BonjourSDKLike\Lib\$(ARCH)
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: mDNSShared
+      contents: 'dns_sd.h'
+      targetFolder: build\$(BUILD_CONFIGURATION)\BonjourSDKLike\Include
   - task: ArchiveFiles@2
     inputs:
-      rootFolderOrFile: build\$(BUILD_CONFIGURATION)
+      rootFolderOrFile: build\$(BUILD_CONFIGURATION)\BonjourSDKLike\
       includeRootFolder: false
       archiveFile: $(Build.ArtifactStagingDirectory)\$(ARCH)_$(BUILD_CONFIGURATION).zip
   - task: PublishBuildArtifacts@1

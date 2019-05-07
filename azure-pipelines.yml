@@ -18,7 +18,7 @@ jobs:
         ARCH: x64
       x64 Release:
         CMAKE_GENERATOR: "Visual Studio 15 2017 Win64"
-        BUILD_CONFIGURATION: "Release"
+        BUILD_CONFIGURATION: "RelWithDebInfo"
         ARCH: x64
       Win32 Debug:
         CMAKE_GENERATOR: "Visual Studio 15 2017"
@@ -26,7 +26,7 @@ jobs:
         ARCH: Win32
       Win32 Release:
         CMAKE_GENERATOR: "Visual Studio 15 2017"
-        BUILD_CONFIGURATION: "Release"
+        BUILD_CONFIGURATION: "RelWithDebInfo"
         ARCH: Win32
   steps:
   - task: CMake@1
@@ -36,6 +36,11 @@ jobs:
     inputs:
       solution: build\dnssd.sln
       configuration: $(BUILD_CONFIGURATION)
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: build\dnssd.dir\$(BUILD_CONFIGURATION)
+      contents: '*.pdb'
+      targetFolder: build\$(BUILD_CONFIGURATION)
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: build\$(BUILD_CONFIGURATION)
